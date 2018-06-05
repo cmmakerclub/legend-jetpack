@@ -1,4 +1,5 @@
 #include "MqttModule.h"
+extern int temp;
 
 #define MQTT_CONFIG_FILE "/mymqtt.json"
 void MqttModule::config(CMMC_System *os, AsyncWebServer* server) {
@@ -232,7 +233,8 @@ void MqttModule::register_publish_hooks(MqttConnector* mqtt) {
     // if (sensorData.field8) { data["field8"] = sensorData.field8; }
     // if (sensorData.ms) { data["ms"] = sensorData.ms; }
     // if (sensorData.battery) { data["battery"] = sensorData.battery; }
-    Serial.println("PUBLISHED!");
+    Serial.println("PUBLISHING...!");
+    Serial.printf("temp = %d\r\n", temp);
 
   }, PUBLISH_EVERY);
 
