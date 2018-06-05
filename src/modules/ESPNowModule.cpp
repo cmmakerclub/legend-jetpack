@@ -6,14 +6,6 @@ void ESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
   memcpy(self_mac, slave_addr, 6);
   this->led = ((CMMC_Legend*) os)->getBlinker();;
   strcpy(this->path, "/api/espnow");
-  sensor1 = new CMMC_BME680();
-  sensor1->every(10);
-  sensor1->onData([](void *d, size_t len) {
-    memcpy(&data1, d, len);
-    Serial.printf("ON SENSOR DATA.. at %lums\r\n", millis());
-  });
-
-  sensor1->setup();
 
   static ESPNowModule *that = this;
   this->os = os;
@@ -50,7 +42,6 @@ void ESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
 void ESPNowModule::loop() {
   Serial.printf("looping at %lums\r\n", millis());
   u8 t = 1;
-  sensor1->read();
   delay(2);
   Serial.printf("sending at %lums\r\n", millis());
   espNow.send(master_mac, &t, 1, []() {
@@ -67,54 +58,7 @@ void ESPNowModule::configLoop() {
 }
 void ESPNowModule::setup() { 
   _init_espnow(); 
-}
-
-void ESPNowModule::_read_sensor() {
-  uint32_t moistureValue, phValue, batteryValue;
-  /* battery */
-  Serial.println("Reading Battery..");
-  digitalWrite(14, LOW);
-  digitalWrite(15, LOW);
-  delay(1000);
-  batteryValue = analogRead(A0) * 0.0051724137931034f * 100;
-
-  /* pH */
-  Serial.println("Reading Ph..");
-  digitalWrite(14, HIGH);
-  digitalWrite(15, LOW);
-  delay(10);
-  phValue = map(analogRead(A0), 0, 200, 800, 300);
-  delay(10);
-  digitalWrite(14, LOW);
-  digitalWrite(15, LOW);
-
-  /* Moisture */
-  Serial.println("Reading Moisture..");
-  digitalWrite(14, HIGH);
-  digitalWrite(15, HIGH);
-  delay(10);
-  int a0Val = analogRead(A0);
-  Serial.printf("a0Val = %d\r\n", a0Val);
-  moistureValue = ((a0Val * 0.035f) + 1) * 100;
-
-  //turn off
-  delay(10);
-  digitalWrite(14, LOW);
-  digitalWrite(15, LOW);
-  data2.battery = batteryValue;
-
-  data2.field1 = data1.field1; /* temp */
-  data2.field2 = data1.field2; /* humid */
-  data2.field3 = phValue;
-  data2.field4 =  moistureValue;
-  data2.field5 = data1.field3; /* pressure */
-  data2.ms = millis();
-  data2.sum = CMMC::checksum((uint8_t*) &data2, sizeof(data2) - sizeof(data2.sum));
-
-  strcpy(data2.sensorName, data1.sensorName);
-  data2.nameLen = strlen(data2.sensorName); 
-}
-
+} 
 void ESPNowModule::_init_simple_pair() {
   Serial.println("calling simple pair.");
   this->led->blink(250);

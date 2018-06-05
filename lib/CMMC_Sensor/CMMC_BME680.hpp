@@ -94,10 +94,10 @@ class CMMC_BME680 : public CMMC_Sensor
     void read()
     {
         if (!isBmeError && iaqSensor.run()) { // If new data is available 
-          Serial.printf("temp=%f, rawTemp=%f, humidity=%f, raw_humididy=%f, iaq=%f, iaqAcc=%u\r\n", 
-            iaqSensor.temperature, iaqSensor.rawTemperature,
-            iaqSensor.humidity, iaqSensor.rawHumidity, 
-            iaqSensor.iaqEstimate, iaqSensor.iaqAccuracy); 
+          // Serial.printf("temp=%f, rawTemp=%f, humidity=%f, raw_humididy=%f, iaq=%f, iaqAcc=%u\r\n", 
+          //   iaqSensor.temperature, iaqSensor.rawTemperature,
+          //   iaqSensor.humidity, iaqSensor.rawHumidity, 
+          //   iaqSensor.iaqEstimate, iaqSensor.iaqAccuracy); 
           data.field1 = iaqSensor.temperature*100;
           data.field2 = iaqSensor.humidity*100;
           data.field3 = (iaqSensor.iaqEstimate*100)+1;
@@ -106,6 +106,7 @@ class CMMC_BME680 : public CMMC_Sensor
           data.field6 = iaqSensor.rawHumidity*100;
           data.ms = millis(); 
         } else {
+          Serial.println("BME data not available.");
           checkIaqSensorStatus();
         }
       static CMMC_BME680 *that = this;
