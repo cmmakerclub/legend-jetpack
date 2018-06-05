@@ -2,7 +2,7 @@
 #define CMMC_SENSOR_RTC_H
 
 #include <Arduino.h>
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
 #include <Wire.h>
 #include "RTClib.h"
 

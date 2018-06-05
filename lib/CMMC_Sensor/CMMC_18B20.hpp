@@ -2,7 +2,7 @@
 #define CMMC_SENSOR_18B20_H
 
 #include <Arduino.h>
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
 
 class CMMC_18B20 : public CMMC_Sensor
 {

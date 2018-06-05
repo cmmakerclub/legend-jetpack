@@ -2,7 +2,7 @@
 #define CMMC_SENSOR_BME280_H
 
 #include <Arduino.h>
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
 
 class CMMC_BME280 : public CMMC_Sensor
 {

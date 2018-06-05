@@ -1,5 +1,12 @@
 #include <CMMC_Module.h>
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
+#include <DHT.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 #ifndef CMMC_SENSOR_MODULE_H
 #define CMMC_SENSOR_MODULE_H 

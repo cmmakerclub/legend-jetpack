@@ -2,7 +2,7 @@
 #define CMMC_SENSOR_BME680_H
 
 #include <Arduino.h>
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
 #include <bsec.h>
 
 // Helper functions declarations

@@ -2,7 +2,7 @@
 #define CMMC_SENSOR_VL53L0X_H
 
 #include <Arduino.h>
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
 #include "Adafruit_VL53L0X.h"
 
 

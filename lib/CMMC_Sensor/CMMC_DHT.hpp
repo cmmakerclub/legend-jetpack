@@ -2,7 +2,7 @@
 #define CMMC_SENSOR_DHT_H
 
 #include <Arduino.h>
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
 
 class CMMC_DHT : public CMMC_Sensor
 {

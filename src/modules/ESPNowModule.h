@@ -8,7 +8,7 @@
 #include <CMMC_Module.h>
 #include <CMMC_ESPNow.h>
 #include <CMMC_SimplePair.h>
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
 #include <CMMC_LED.h>
 #include <CMMC_BME680.hpp>
 

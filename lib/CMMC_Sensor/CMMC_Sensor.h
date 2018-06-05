@@ -1,13 +1,5 @@
 #ifndef CMMC_SENSOR_H
 #define CMMC_SENSOR_H
-//abstract class Sensor
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BME280.h>
-#include <DHT.h>
-#include <Wire.h>
-#include <SPI.h>
-#include <OneWire.h>
-#include <DallasTemperature.h>
 #include <CMMC_Interval.h>
   typedef struct __attribute((__packed__)) {
     uint8_t from[6];
@@ -29,28 +21,21 @@
     uint32_t sent_ms = 0;
     uint32_t sum = 0;
   } CMMC_SENSOR_DATA_T;
-class CMMC_Sensor {
-  public:
 
-    String tag;
-    CMMC_SENSOR_DATA_T data;
-    CMMC_Sensor() {
-      cb = [](void* d, uint32_t len) { 
-        Serial.println("DUMMY Sensor CB.");
-      };
-    }
-    typedef std::function<void(void *, size_t len)> callback_t;
-    inline virtual void setup(int a = 0, int b = 0)  =0;
+typedef std::function<void(void *, size_t len)> callback_t;
+class CMMC_Sensor {
+  public: 
+    CMMC_Sensor();
+    ~CMMC_Sensor();
+    void onData(callback_t cb);
+    void every(uint32_t ms);
+    virtual void setup(int a = 0, int b = 0)  = 0;
     virtual void read() = 0;
-    void onData(callback_t cb) {
-      this->cb = cb;
-    }
-    void every(uint32_t ms) {
-      this->everyMs = ms;
-    }
   protected:
+    String tag;
     callback_t cb;
-    CMMC_Interval interval;
     uint32_t everyMs = 5000L;
+    CMMC_Interval interval;
+    CMMC_SENSOR_DATA_T data;
 };
 #endif

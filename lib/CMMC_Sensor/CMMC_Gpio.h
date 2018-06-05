@@ -1,4 +1,4 @@
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
 
 
 class CMMC_Gpio { 

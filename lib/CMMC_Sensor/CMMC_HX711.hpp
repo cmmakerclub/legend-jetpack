@@ -2,7 +2,7 @@
 #define CMMC_SENSOR_HX711_H
 
 #include <Arduino.h>
-#include <CMMC_Sensor.hpp>
+#include <CMMC_Sensor.h>
 #include "HX711.h"
 
 // real weight 670 g
