@@ -44,12 +44,15 @@ CMMC_ESPNow::CMMC_ESPNow() {
 
 void CMMC_ESPNow::init(int mode) {
   WiFi.disconnect();
+  delay(20);
   if (mode == NOW_MODE_SLAVE) {
     WiFi.mode(WIFI_STA);
   }
   else {
     WiFi.mode(WIFI_STA);
   }
+
+  delay(20); 
 
   if (esp_now_init() == 0) {
 		USER_DEBUG_PRINTF("espnow init ok");
@@ -62,7 +65,7 @@ void CMMC_ESPNow::init(int mode) {
   if (mode == NOW_MODE_CONTROLLER) {
     esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER);
   } else {
-    esp_now_set_self_role(ESP_NOW_ROLE_SLAVE);
+    esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
   }
 
   esp_now_register_send_cb(this->_system_on_message_sent);
@@ -76,8 +79,6 @@ void CMMC_ESPNow::send(uint8_t *mac, u8* data, int len, void_cb_t cb, uint32_t w
   }
   this->_message_sent_status = -1;
   this->_waiting_message_has_arrived = false;
-  CMMC_SENSOR_T *packet;
-  packet = (CMMC_SENSOR_T *)data;
   uint16_t MAX_RETRIES   = 10;
   uint16_t RETRIES_DELAY = 10;
   uint16_t retries = 0;
@@ -95,8 +96,6 @@ void CMMC_ESPNow::send(uint8_t *mac, u8* data, int len, void_cb_t cb, uint32_t w
         Serial.printf("reach max retries.\r\n");
         break;
       }
-      packet->field6= retries;
-      // packet->sum= CMMC::checksum((uint8_t*)packet, sizeof(*packet) - sizeof(packet->sum));
     }
   }
 
@@ -105,7 +104,7 @@ void CMMC_ESPNow::send(uint8_t *mac, u8* data, int len, void_cb_t cb, uint32_t w
     USER_DEBUG_PRINTF("timeout at %lu/%lu", millis(), timeout_at_ms);
     while (millis() < timeout_at_ms) {
       USER_DEBUG_PRINTF("Waiting a command message...");
-      delay(100);
+      delay(2);
     }
 
     if (this->_waiting_message_has_arrived==false) {

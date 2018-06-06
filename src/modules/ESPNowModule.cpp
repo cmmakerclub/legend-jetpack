@@ -1,5 +1,21 @@
 #include "ESPNowModule.h"
 
+// void printBits(size_t const size, void const * const ptr) {
+//     unsigned char *b = (unsigned char*) ptr;
+//     unsigned char byte;
+//     int i, j;
+
+//     for (i=0; i<= size-1;i++) {
+//         for (j=7;j>=0;j--)
+//         {
+//             byte = (b[i] >> j) & 1;
+//             Serial.printf("%u", byte);
+//         }
+//         Serial.println();
+//     }
+//     Serial.println("---");
+// }
+
 void ESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   uint8_t* slave_addr = CMMC::getESPNowSlaveMacAddress();
@@ -40,14 +56,11 @@ void ESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
 } 
 
 void ESPNowModule::loop() {
-  Serial.printf("looping at %lums\r\n", millis());
   u8 t = 1;
-  delay(2);
-  Serial.printf("sending at %lums\r\n", millis());
   espNow.send(master_mac, &t, 1, []() {
     Serial.println("espnow sending timeout.");
   }, 200);
-  delay(1000);
+  delay(500); 
 }
 
 void ESPNowModule::configLoop() {
@@ -113,29 +126,24 @@ void ESPNowModule::_init_simple_pair() {
 void ESPNowModule::_go_sleep(uint32_t deepSleepM) {
   Serial.printf("\r\nGo sleep for .. %lu min. \r\n", deepSleepM);
   ESP.deepSleep(deepSleepM * 60e6);
-}
-
+} 
 
 void ESPNowModule::_init_espnow() {
   Serial.print("Slave Mac Address: ");
   CMMC::printMacAddress(self_mac, true);
   espNow.init(NOW_MODE_SLAVE);
   espNow.enable_retries(true);
-  // espNow.debug([](const char* msg) {
-  //   Serial.println(msg);
-  // });
-  // static CMMC_LED *led = ((CMMC_Legend*) os)->getBlinker();
-  // led->detach();
+
+  static CMMC_LED *led;
+  led = ((CMMC_Legend*) os)->getBlinker();
+  led->detach();
   espNow.on_message_sent([](uint8_t *macaddr, u8 status) {
-    // led->toggle();
-    Serial.printf("sent status %lu\r\n", status);
+    led->toggle();
   });
 
+//assumes little endian
   espNow.on_message_recv([](uint8_t * macaddr, uint8_t * data, uint8_t len) {
-    // led.toggle();
-    Serial.printf("GOT sleepTime = %lu at(%lu ms)\r\n", data[0], millis());
-    // if (data[0] == 0)
-    //   data[0] = DEFAULT_DEEP_SLEEP_M;
-    // _go_sleep(data[0]);
+    led->toggle();
+    Serial.printf("len = %u byte, sleepTime = %lu at(%lu ms)\r\n", len, data[0], millis());
   });
 }

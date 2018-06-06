@@ -23,7 +23,7 @@ class ESPNowModule: public CMMC_Module {
     void setup(); 
     void loop(); 
   private:
-    CMMC_System *os;
+    CMMC_System *os; 
     CMMC_ESPNow espNow;
     CMMC_SimplePair simplePair;
     CMMC_LED *led;
