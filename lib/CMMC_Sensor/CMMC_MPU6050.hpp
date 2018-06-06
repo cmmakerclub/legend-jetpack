@@ -19,6 +19,8 @@ public:
   float Gy[3];
   float Angle[3];
 
+  float GyroX, GyroY, GyroZ;
+
   long time_prev;
   float dt;
 
@@ -58,13 +60,17 @@ public:
     //  Integration
     Angle[2] = Angle[2] + Gy[2] * dt;
 
+    GyroX = Angle[1];
+    GyroY = Angle[0];
+    GyroZ = Angle[2];
+
     // print debug
-    // Serial.printf("MPU6050 --> Gx : %2f   Gy : %2f   Gz : %2f \r\n", Angle[1], Angle[0], Angle[2]);
+    Serial.printf("MPU6050 --> Gx : %2f   Gy : %2f   Gz : %2f \r\n", Angle[1], Angle[0], Angle[2]);
   }
 
   CMMC_MPU6050()
   {
-    this->data.type;
+    this->data.type = 0;
   }
 
   void setup()
@@ -73,7 +79,7 @@ public:
   }
 
   // set default I2C Pin on 4 (SDA) and 5 (SCL) from ESPresso Lite V2.0
-  void setup(int a = 4, int b = 5)
+  void setup(int a = 0, int b = 0)
   {
     Serial.println("MPU6050 begin..");
     Serial.println("I2C pin SDA:4, SCL:5 ESPresso Lite V2.0");
@@ -84,25 +90,20 @@ public:
     Wire.endTransmission(true);
 
     readMPU();
-    data.field1 = Angle[1]; // axis X
-    data.field2 = Angle[0]; // axis Y
-    data.field3 = Angle[2]; // axis Z
+    data.field1 = GyroX;
+    data.field2 = GyroY;
+    data.field3 = GyroZ;
   };
 
   void read()
   {
-    readMPU();
-    data.field1 = Angle[1]; // axis X
-    data.field2 = Angle[0]; // axis Y
-    data.field3 = Angle[2]; // axis Z
-    data.ms = millis();
-
     static CMMC_MPU6050 *that = this;
     that->interval.every_ms(that->everyMs, []() {
       // that->readMPU();
-      // that->data.field1 = Angle[1]; // axis X
-      // that->data.field2 = Angle[0]; // axis Y
-      // that->data.field3 = Angle[2]; // axis Z
+      // that->data.field1 = GyroX;
+      // that->data.field2 = GyroY;
+      // that->data.field3 = GyroZ;
+      // that->data.ms = millis();
       that->cb((void *)&that->data, sizeof(that->data));
     });
   };
