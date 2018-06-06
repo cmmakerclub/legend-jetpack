@@ -43,8 +43,7 @@ void KadyaiModule::_read_sensor() {
   digitalWrite(15, HIGH);
   delay(10);
   a0Val = analogRead(A0);
-  moistureValue = ((a0Val * 0.035f) + 1) * 100;
-
+  moistureValue = ((a0Val * 0.035f) + 1) * 100; 
   Serial.printf("battery=%lu, moisture=%lu, pH=%lu\r\n", batteryValue, moistureValue, phValue);
 
   //turn off
