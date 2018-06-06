@@ -1,7 +1,8 @@
-#include <CMMC_Module.h> 
-#ifndef CMMC_MQTT_MODULE_H
-#define CMMC_MQTT_MODULE_H 
 
+#ifndef CMMC_MQTT_MODULE_H
+#define CMMC_MQTT_MODULE_H
+
+#include <CMMC_Module.h> 
 #include <MqttConnector.h>
 
 class MqttModule: public CMMC_Module {
