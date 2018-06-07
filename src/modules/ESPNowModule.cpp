@@ -1,6 +1,6 @@
 #include "ESPNowModule.h"
 
-extern uint32_t user_espnow_sent_at;
+// extern uint32_t user_espnow_sent_at;
 
 // void printBits(size_t const size, void const * const ptr) {
 //     unsigned char *b = (unsigned char*) ptr;
@@ -87,7 +87,7 @@ void ESPNowModule::_init_espnow() {
   static ESPNowModule* module; 
   module = this;
   espNow.on_message_recv([](uint8_t * macaddr, uint8_t * data, uint8_t len) {
-    user_espnow_sent_at = millis();
+    // user_espnow_sent_at = millis();
     led->toggle();
     Serial.printf("RECV: len = %u byte, sleepTime = %lu at(%lu ms)\r\n", len, data[0], millis());
     module->_go_sleep(data[0]);

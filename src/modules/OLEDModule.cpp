@@ -1,6 +1,5 @@
 #include "OLEDModule.h"
-extern int temp;
-extern uint32_t user_espnow_sent_at;
+// extern uint32_t user_espnow_sent_at;
 
 
 void OLEDModule::config(CMMC_System *os, AsyncWebServer* server) {
@@ -38,7 +37,7 @@ void OLEDModule::setup() {
 void OLEDModule::loop() { 
   if (millis() % 1000 == 0) {
     oled->clear();
-    oled->drawString(20, 25, String("sent at ") + String(user_espnow_sent_at) + String("ms"));
+    // oled->drawString(20, 25, String("sent at ") + String(user_espnow_sent_at) + String("ms"));
     oled->display();
   }
 }
