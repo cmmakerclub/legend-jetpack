@@ -1,7 +1,8 @@
 #include "ESPNowModule.h"
 
-extern uint32_t user_espnow_sent_at;
+extern char userEspnowSensorName[16];
 
+// extern uint32_t user_espnow_sent_at; 
 // void printBits(size_t const size, void const * const ptr) {
 //     unsigned char *b = (unsigned char*) ptr;
 //     unsigned char byte;
@@ -37,6 +38,7 @@ void ESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
     if (root->containsKey("mac")) {
       String macStr = String((*root)["mac"].as<const char*>());
       String deviceName = String((*root)["deviceName"].as<const char*>());
+      strcpy(userEspnowSensorName, deviceName.c_str());
       Serial.printf("Loaded mac %s, name=%s\r\n", macStr.c_str(), deviceName.c_str());
       uint8_t mac[6];
       CMMC::convertMacStringToUint8(macStr.c_str(), mac);
@@ -66,9 +68,12 @@ void ESPNowModule::configLoop() {
     delay(1000);
   }
 }
+
+extern CMMC_SENSOR_DATA_T userKadyaiData;
 void ESPNowModule::setup() { 
   _init_espnow(); 
   uint8_t t = 2;
+  CMMC::dump((u8*) &userKadyaiData, sizeof(userKadyaiData));
   espNow.send(master_mac, &t, 1, [&]() {
     Serial.printf("espnow sending timeout. sleepTimeM = %lu\r\n", _defaultDeepSleep_m); 
     _go_sleep(_defaultDeepSleep_m);
@@ -87,7 +92,7 @@ void ESPNowModule::_init_espnow() {
   static ESPNowModule* module; 
   module = this;
   espNow.on_message_recv([](uint8_t * macaddr, uint8_t * data, uint8_t len) {
-    user_espnow_sent_at = millis();
+    // user_espnow_sent_at = millis();
     led->toggle();
     Serial.printf("RECV: len = %u byte, sleepTime = %lu at(%lu ms)\r\n", len, data[0], millis());
     module->_go_sleep(data[0]);
