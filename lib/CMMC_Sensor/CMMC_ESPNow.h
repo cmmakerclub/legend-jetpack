@@ -47,6 +47,8 @@ class CMMC_ESPNow
     bool _enable_retries = false;
     bool _waiting_message_has_arrived;
     char debug_buffer[60];
+    uint32_t sent_prev;
+    uint32_t sent_timeout;
 };
 
 #endif //CMMC_ESPNow_H

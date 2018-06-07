@@ -102,9 +102,8 @@ void CMMC_ESPNow::send(uint8_t *mac, u8* data, int len, void_cb_t cb, uint32_t w
   if (cb != NULL) {
     uint32_t timeout_at_ms = millis() + wait_time;
     USER_DEBUG_PRINTF("timeout at %lu/%lu", millis(), timeout_at_ms);
-    while (millis() < timeout_at_ms) {
-      USER_DEBUG_PRINTF("Waiting a command message...");
-      delay(2);
+    while (millis() < timeout_at_ms && this->_waiting_message_has_arrived == false) {
+      yield();
     }
 
     if (this->_waiting_message_has_arrived==false) {

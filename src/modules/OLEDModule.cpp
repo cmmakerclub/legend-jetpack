@@ -1,5 +1,7 @@
 #include "OLEDModule.h"
 extern int temp;
+extern uint32_t user_espnow_sent_at;
+
 
 void OLEDModule::config(CMMC_System *os, AsyncWebServer* server) {
   static OLEDModule *that = this;
@@ -26,16 +28,17 @@ void OLEDModule::printBuffer(void) {
 
 void OLEDModule::setup() {
   oled->init();
+  oled->flipScreenVertically();
   oled->setContrast(255);
   printBuffer();
   oled->clear();
+  oled->setFont(ArialMT_Plain_10);
 }
 
 void OLEDModule::loop() { 
   if (millis() % 1000 == 0) {
     oled->clear();
-    oled->setFont(ArialMT_Plain_10);
-    oled->drawString(50, 25, String(millis()));
+    oled->drawString(20, 25, String("sent at ") + String(user_espnow_sent_at) + String("ms"));
     oled->display();
   }
 }

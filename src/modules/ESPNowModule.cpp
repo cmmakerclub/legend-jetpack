@@ -1,5 +1,7 @@
 #include "ESPNowModule.h"
 
+extern uint32_t user_espnow_sent_at;
+
 // void printBits(size_t const size, void const * const ptr) {
 //     unsigned char *b = (unsigned char*) ptr;
 //     unsigned char byte;
@@ -57,10 +59,11 @@ void ESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
 
 void ESPNowModule::loop() {
   u8 t = 1;
-  espNow.send(master_mac, &t, 1, []() {
-    Serial.println("espnow sending timeout.");
-  }, 200);
-  delay(500); 
+  if (millis() % 100 == 0) {
+    espNow.send(master_mac, &t, 1, []() {
+      Serial.println("espnow sending timeout.");
+    }, 100); 
+  }
 }
 
 void ESPNowModule::configLoop() {
@@ -131,8 +134,11 @@ void ESPNowModule::_go_sleep(uint32_t deepSleepM) {
 void ESPNowModule::_init_espnow() {
   Serial.print("Slave Mac Address: ");
   CMMC::printMacAddress(self_mac, true);
-  espNow.init(NOW_MODE_SLAVE);
-  espNow.enable_retries(true);
+  // espNow.debug([](const char* msg) {
+  //   Serial.println(msg);
+  // });
+  espNow.init(NOW_MODE_SLAVE); 
+  // espNow.enable_retries(true);
 
   static CMMC_LED *led;
   led = ((CMMC_Legend*) os)->getBlinker();
@@ -143,6 +149,7 @@ void ESPNowModule::_init_espnow() {
 
 //assumes little endian
   espNow.on_message_recv([](uint8_t * macaddr, uint8_t * data, uint8_t len) {
+    user_espnow_sent_at = millis();
     led->toggle();
     Serial.printf("len = %u byte, sleepTime = %lu at(%lu ms)\r\n", len, data[0], millis());
   });
