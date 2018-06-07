@@ -1,7 +1,8 @@
 #include "KadyaiModule.h"
 extern int temp;
 
-
+extern char userEspnowSensorName[16];
+extern CMMC_SENSOR_DATA_T userKadyaiData;
 
 void KadyaiModule::config(CMMC_System *os, AsyncWebServer* server) {
   static KadyaiModule *that = this;
@@ -63,17 +64,18 @@ void KadyaiModule::_read_sensor() {
   //turn off
   delay(10);
   turnOffSensorSwitch();
-  data2.battery = batteryValue;
-
-  data2.field1 = data1.field1; /* temp */
-  data2.field2 = data1.field2; /* humid */
-  data2.field3 = phValue;
-  data2.field4 =  moistureValue;
-  data2.field5 = data1.field3; /* pressure */
-  data2.ms = millis();
-  // data2.sum = CMMC::checksum((uint8_t*) &data2, sizeof(data2) - sizeof(data2.sum)); 
-  // strcpy(data2.sensorName, data1.sensorName);
-  // data2.nameLen = strlen(data2.sensorName); 
+  data1.battery = batteryValue; 
+  data1.field1 = data1.field1; /* temp */
+  data1.field2 = data1.field2; /* humid */
+  data1.field4 = moistureValue;
+  data1.field5 = data1.field3; /* pressure */
+  data1.field3 = phValue;
+  data1.ms = millis();
+  strcpy(data1.sensorName, userEspnowSensorName);
+  data1.nameLen = strlen(data1.sensorName); 
+  data1.sum = CMMC::checksum((uint8_t*) &data1, sizeof(data1) - sizeof(data1.sum)); 
+  memcpy(&userKadyaiData, &data1, sizeof(data1));
+  CMMC::dump((u8*) &userKadyaiData, sizeof(userKadyaiData));
 }
 
 void KadyaiModule::configLoop() { 

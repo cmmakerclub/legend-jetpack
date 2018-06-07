@@ -18,7 +18,6 @@ class KadyaiModule: public CMMC_Module {
   private:
     void _read_sensor();
     CMMC_SENSOR_DATA_T data1;
-    CMMC_SENSOR_DATA_T data2;
     CMMC_Sensor *sensor1;
 };
 

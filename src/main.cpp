@@ -4,8 +4,11 @@
 #include <modules/ESPNowModule.h>
 // #include <modules/OLEDModule.h>
 #include <modules/MPU6050Module.h>
+#include <CMMC_Sensor.h>
 
 CMMC_Legend os;
+char userEspnowSensorName[16]; 
+CMMC_SENSOR_DATA_T userKadyaiData;
 
 // int temp = 0; // for BME680Module.cpp
 
