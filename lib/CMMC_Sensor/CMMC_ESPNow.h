@@ -18,8 +18,10 @@
     _user_debug_cb(this->debug_buffer); \
   }
 
-typedef void (*cmmc_debug_cb_t)(const char* message);
-typedef void (*void_cb_t)();
+typedef void (*cmmc_debug_cb_t)(const char* message); 
+typedef std::function<void(void)> void_cb_t; 
+// typedef void (*void_cb_t)();
+
 
 class CMMC_ESPNow
 {

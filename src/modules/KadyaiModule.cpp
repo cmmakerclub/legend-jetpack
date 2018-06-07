@@ -1,17 +1,17 @@
 #include "KadyaiModule.h"
 extern int temp;
 
-static CMMC_SENSOR_DATA_T data1;
-static CMMC_SENSOR_DATA_T data2;
+
 
 void KadyaiModule::config(CMMC_System *os, AsyncWebServer* server) {
   static KadyaiModule *that = this;
-  sensor1 = new CMMC_BME680();
+  sensor1 = new CMMC_BME280();
   sensor1->setup();
-  sensor1->every(10);
-  sensor1->onData([](void *d, size_t len) {
+  sensor1->every(1);
+  sensor1->onData([&](void *d, size_t len) {
     memcpy(&data1, d, len);
     Serial.printf("ON SENSOR DATA.. at %lums\r\n", millis());
+    Serial.printf("== temp=%lu, humid=%lu, pressure=%lu\r\n", data1.field1, data1.field2, data1.field3);
   });
 }
 
@@ -21,6 +21,7 @@ void turnOffSensorSwitch() {
   digitalWrite(14, LOW);
   digitalWrite(15, LOW); 
 }
+
 void turnOnSensorSwitch(SENSOR_TYPE type) {
   if (type == PH) { 
     digitalWrite(14, HIGH);
@@ -30,35 +31,34 @@ void turnOnSensorSwitch(SENSOR_TYPE type) {
     digitalWrite(14, HIGH);
     digitalWrite(15, HIGH);
   } 
-  delay(10);
+  delay(50);
 }
 
 void KadyaiModule::_read_sensor() {
-  Serial.println("READ SENSOR...");
-  uint32_t moistureValue, phValue, batteryValue;
+  int moistureValue, phValue, batteryValue;
   int a0Val;
   /* battery */
-  Serial.println("Reading Battery..");
+  Serial.printf("Reading Battery.. (at %lums)\r\n", millis());
   turnOffSensorSwitch(); 
   delay(10);
   batteryValue = analogRead(A0) * 0.0051724137931034f * 100;
 
   /* pH */
-  Serial.println("Reading Ph..");
+  Serial.printf("Reading Ph.. (at %lums)\r\n", millis());
   turnOnSensorSwitch(PH);
   a0Val = analogRead(A0);
+  phValue = a0Val;
+
   Serial.printf("ph raw a0Val = %d\r\n", a0Val);
-  phValue = map(a0Val, 0, 200, 900, 300); 
   turnOffSensorSwitch();
   delay(10); 
 
-
   /* Moisture */
-  Serial.println("Reading Moisture..");
+  Serial.printf("Reading Moisture.. (at %lums)\r\n", millis());
   turnOnSensorSwitch(MOISTURE); 
   a0Val = analogRead(A0);
   moistureValue = ((a0Val * 0.035f) + 1) * 100; 
-  Serial.printf("battery=%lu, moisture=%lu, pH=%lu\r\n", batteryValue, moistureValue, phValue);
+  Serial.printf("battery=%d, moisture=%d, pH=%d\r\n", batteryValue, moistureValue, phValue);
 
   //turn off
   delay(10);

@@ -10,7 +10,7 @@
 #include <CMMC_SimplePair.h>
 #include <CMMC_Sensor.h>
 #include <CMMC_LED.h>
-#include <CMMC_BME680.hpp>
+#include <CMMC_BME280.hpp>
 
 
 #define BUTTON_PIN  0
@@ -23,6 +23,7 @@ class ESPNowModule: public CMMC_Module {
     void setup(); 
     void loop(); 
   private:
+    uint8_t _defaultDeepSleep_m = 30;
     CMMC_System *os; 
     CMMC_ESPNow espNow;
     CMMC_SimplePair simplePair;

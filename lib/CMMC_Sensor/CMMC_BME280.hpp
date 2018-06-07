@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <CMMC_Sensor.h>
+#include <Adafruit_BME280.h>
 
 class CMMC_BME280 : public CMMC_Sensor
 {
@@ -32,10 +33,9 @@ public:
   {
     static CMMC_BME280 *that = this;
     that->interval.every_ms(that->everyMs, []() {
-      that->data.field1 = that->bme->readTemperature();
-      that->data.field2 = that->bme->readHumidity();
-      that->data.field3 = that->bme->readPressure() / 100.0f;
-      that->data.field4 = that->bme->readAltitude(SEALEVELPRESSURE_HPA);
+      that->data.field1 = that->bme->readTemperature()*100;
+      that->data.field2 = that->bme->readHumidity()*100;
+      that->data.field3 = that->bme->readPressure()*100;
       that->cb((void *)&that->data, sizeof(that->data));
     });
   };

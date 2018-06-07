@@ -49,19 +49,19 @@ void CMMC_Legend::init_gpio() {
 }
 
 void CMMC_Legend::init_fs() {
-  Serial.println("OS::Init FS..");
+  // Serial.println("OS::Init FS..");
   SPIFFS.begin();
   Dir dir = SPIFFS.openDir("/");
   isLongPressed();
-  Serial.println("--------------------------");
-  while (dir.next()) {
-    File f = dir.openFile("r");
-    Serial.printf("> %s \r\n", dir.fileName().c_str());
-  }
+  // Serial.println("--------------------------");
+  // while (dir.next()) {
+  //   File f = dir.openFile("r");
+  //   Serial.printf("> %s \r\n", dir.fileName().c_str());
+  // }
   /*******************************************
      Boot Mode Selection
    *******************************************/
-  Serial.println("--------------------------");
+  // Serial.println("--------------------------");
   if (!SPIFFS.exists("/enabled")) {
     mode = SETUP;
   }
@@ -84,7 +84,6 @@ void CMMC_Legend::init_user_config() {
 void CMMC_Legend::init_network() {
   Serial.println("Initializing network.");
   for (int i = 0 ; i < _modules.size(); i++) {
-    Serial.printf("call config idx = %d\r\n", i);
     _modules[i]->config(this, &server);
   }
   if (mode == SETUP) {
@@ -101,7 +100,6 @@ void CMMC_Legend::init_network() {
   else if (mode == RUN) {
     blinker->blink(4000);
     for (int i = 0 ; i < _modules.size(); i++) {
-      Serial.printf("call once idx = %d\r\n", i);
       _modules[i]->setup();
     }
   }

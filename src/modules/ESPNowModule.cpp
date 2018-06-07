@@ -32,38 +32,32 @@ void ESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
   this->_managerPtr->init();
 
   this->_managerPtr->load_config([](JsonObject * root, const char* content) {
-    if (root == NULL) {
-      Serial.print("espnow.json failed. >");
-      Serial.println(content);
-      return ;
+    if (root == NULL) return;
+    Serial.println("[user] json loaded..");
+    if (root->containsKey("mac")) {
+      String macStr = String((*root)["mac"].as<const char*>());
+      String deviceName = String((*root)["deviceName"].as<const char*>());
+      Serial.printf("Loaded mac %s, name=%s\r\n", macStr.c_str(), deviceName.c_str());
+      uint8_t mac[6];
+      CMMC::convertMacStringToUint8(macStr.c_str(), mac);
+      memcpy(that->master_mac, mac, 6);
     }
     else {
-      Serial.println("[user] json loaded..");
-      Serial.println(content);
-      if (root->containsKey("mac")) {
-        String macStr = String((*root)["mac"].as<const char*>());
-        Serial.printf("Loaded mac %s\r\n", macStr.c_str());
-        uint8_t mac[6];
-        CMMC::convertMacStringToUint8(macStr.c_str(), mac);
-        // CMMC::printMacAddress(mac);
-        // Serial.println();
-        memcpy(that->master_mac, mac, 6);
-      }
-      else {
-        Serial.println("no mac field.");
-      }
+      Serial.println("no mac field.");
     }
   });
   this->configWebServer();
 } 
 
 void ESPNowModule::loop() {
-  u8 t = 1;
+  // u8 t = 1;
   if (millis() % 100 == 0) {
-    espNow.send(master_mac, &t, 1, []() {
-      Serial.println("espnow sending timeout.");
-    }, 100); 
+  //   espNow.send(master_mac, &t, 1, []() {
+  //     Serial.println("espnow sending timeout."); 
+  //   }, 200); 
   }
+  Serial.println("HELLO");
+  delay(10);
 }
 
 void ESPNowModule::configLoop() {
@@ -74,13 +68,36 @@ void ESPNowModule::configLoop() {
 }
 void ESPNowModule::setup() { 
   _init_espnow(); 
+  uint8_t t = 2;
+  espNow.send(master_mac, &t, 1, [&]() {
+    Serial.printf("espnow sending timeout. sleepTimeM = %lu\r\n", _defaultDeepSleep_m); 
+    _go_sleep(_defaultDeepSleep_m);
+  }, 200); 
 } 
+
+void ESPNowModule::_init_espnow() {
+  // espNow.debug([](const char* msg) { Serial.println(msg); });
+  espNow.init(NOW_MODE_SLAVE); 
+  espNow.enable_retries(true);
+
+  static CMMC_LED *led;
+  led = ((CMMC_Legend*) os)->getBlinker();
+  led->detach();
+  espNow.on_message_sent([](uint8_t *macaddr, u8 status) { led->toggle(); }); 
+  static ESPNowModule* module; 
+  module = this;
+  espNow.on_message_recv([](uint8_t * macaddr, uint8_t * data, uint8_t len) {
+    user_espnow_sent_at = millis();
+    led->toggle();
+    Serial.printf("RECV: len = %u byte, sleepTime = %lu at(%lu ms)\r\n", len, data[0], millis());
+    module->_go_sleep(data[0]);
+  });
+}
+
 void ESPNowModule::_init_simple_pair() {
   Serial.println("calling simple pair.");
   this->led->blink(250);
-  simplePair.debug([](const char* msg) {
-    Serial.println(msg);
-  });
+  // simplePair.debug([](const char* msg) { Serial.println(msg); });
   static ESPNowModule *module = this;
   static bool *flag = &sp_flag_done;
   simplePair.begin(SLAVE_MODE, [](u8 status, u8 * sa, const u8 * data) {
@@ -127,30 +144,10 @@ void ESPNowModule::_init_simple_pair() {
 }
 
 void ESPNowModule::_go_sleep(uint32_t deepSleepM) {
-  Serial.printf("\r\nGo sleep for .. %lu min. \r\n", deepSleepM);
+  // deepSleepM = 1;
+  Serial.printf("\r\nGo sleep for %lu min.\r\n", deepSleepM);
+  Serial.println("bye!");
+  
   ESP.deepSleep(deepSleepM * 60e6);
+  Serial.println("not be reached here.");
 } 
-
-void ESPNowModule::_init_espnow() {
-  Serial.print("Slave Mac Address: ");
-  CMMC::printMacAddress(self_mac, true);
-  // espNow.debug([](const char* msg) {
-  //   Serial.println(msg);
-  // });
-  espNow.init(NOW_MODE_SLAVE); 
-  // espNow.enable_retries(true);
-
-  static CMMC_LED *led;
-  led = ((CMMC_Legend*) os)->getBlinker();
-  led->detach();
-  espNow.on_message_sent([](uint8_t *macaddr, u8 status) {
-    led->toggle();
-  });
-
-//assumes little endian
-  espNow.on_message_recv([](uint8_t * macaddr, uint8_t * data, uint8_t len) {
-    user_espnow_sent_at = millis();
-    led->toggle();
-    Serial.printf("len = %u byte, sleepTime = %lu at(%lu ms)\r\n", len, data[0], millis());
-  });
-}

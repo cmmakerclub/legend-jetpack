@@ -3,7 +3,6 @@
 
 CMMC_ConfigManager::CMMC_ConfigManager(const char* filename) { 
   strcpy(this->filename_c, filename); 
-  Serial.printf("CONSTRUCTOR FILE NAME: %s\r\n", filename);
   this->_user_debug_cb = [](const char* s) { };
 }
 
@@ -24,8 +23,6 @@ void CMMC_ConfigManager::_load_raw_content() {
   this->fileContent = new char[size + 1];
   strcpy(this->fileContent, buf.get());
 
-  Serial.print(">");
-  Serial.println(this->fileContent);
   this->configFile.close();
 }
 
