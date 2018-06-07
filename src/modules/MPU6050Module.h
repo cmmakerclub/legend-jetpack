@@ -14,6 +14,7 @@ public:
 
 protected:
 private:
+  CMMC_SENSOR_DATA_T data;
   CMMC_MPU6050 *mpu;
 };
 
