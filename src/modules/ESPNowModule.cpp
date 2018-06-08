@@ -73,8 +73,10 @@ extern CMMC_SENSOR_DATA_T userKadyaiData;
 void ESPNowModule::setup() { 
   _init_espnow(); 
   uint8_t t = 2;
+  memcpy(&userKadyaiData.to, master_mac, 6);
+  userKadyaiData.sum = CMMC::checksum((uint8_t*) &userKadyaiData, sizeof(userKadyaiData) - sizeof(userKadyaiData.sum)); 
   CMMC::dump((u8*) &userKadyaiData, sizeof(userKadyaiData));
-  espNow.send(master_mac, &t, 1, [&]() {
+  espNow.send(master_mac, (u8*) &userKadyaiData, sizeof(userKadyaiData), [&]() {
     Serial.printf("espnow sending timeout. sleepTimeM = %lu\r\n", _defaultDeepSleep_m); 
     _go_sleep(_defaultDeepSleep_m);
   }, 200); 

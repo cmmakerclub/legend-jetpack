@@ -12,9 +12,7 @@
 #include <CMMC_LED.h>
 #include <CMMC_BME280.hpp>
 
-
 #define BUTTON_PIN  0
-
 
 class ESPNowModule: public CMMC_Module {
   public:

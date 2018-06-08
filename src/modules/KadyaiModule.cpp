@@ -41,7 +41,7 @@ void KadyaiModule::_read_sensor() {
   /* battery */
   Serial.printf("Reading Battery.. (at %lums)\r\n", millis());
   turnOffSensorSwitch(); 
-  delay(10);
+  delay(20);
   batteryValue = analogRead(A0) * 0.0051724137931034f * 100;
 
   /* pH */
@@ -49,10 +49,10 @@ void KadyaiModule::_read_sensor() {
   turnOnSensorSwitch(PH);
   a0Val = analogRead(A0);
   phValue = a0Val;
-
+  phValue = map(analogRead(A0), 0, 200, 8, 3) * 100; 
   Serial.printf("ph raw a0Val = %d\r\n", a0Val);
   turnOffSensorSwitch();
-  delay(10); 
+  delay(20); 
 
   /* Moisture */
   Serial.printf("Reading Moisture.. (at %lums)\r\n", millis());
@@ -62,14 +62,19 @@ void KadyaiModule::_read_sensor() {
   Serial.printf("battery=%d, moisture=%d, pH=%d\r\n", batteryValue, moistureValue, phValue);
 
   //turn off
-  delay(10);
+  delay(20);
   turnOffSensorSwitch();
+
   data1.battery = batteryValue; 
   data1.field1 = data1.field1; /* temp */
   data1.field2 = data1.field2; /* humid */
   data1.field4 = moistureValue;
   data1.field5 = data1.field3; /* pressure */
   data1.field3 = phValue;
+  // data1.field6 = data1.field6; /* pressure */
+  // data1.field7 = data1.field7; /* pressure */
+  // data1.field8 = data1.field8; /* pressure */
+  // data1.field9 = data1.field9; /* pressure */
   data1.ms = millis();
   strcpy(data1.sensorName, userEspnowSensorName);
   data1.nameLen = strlen(data1.sensorName); 
