@@ -71,10 +71,10 @@ void KadyaiModule::_read_sensor() {
   data1.field4 = moistureValue;
   data1.field5 = data1.field3; /* pressure */
   data1.field3 = phValue;
-  // data1.field6 = data1.field6; /* pressure */
-  // data1.field7 = data1.field7; /* pressure */
-  // data1.field8 = data1.field8; /* pressure */
-  // data1.field9 = data1.field9; /* pressure */
+  // data1.field6 = data1.field6; /* field6 */
+  // data1.field7 = data1.field7; /* field7 */
+  // data1.field8 = data1.field8; /* field8 */
+  // data1.field9 = data1.field9; /* field9 */
   data1.ms = millis();
   strcpy(data1.sensorName, userEspnowSensorName);
   data1.nameLen = strlen(data1.sensorName); 
