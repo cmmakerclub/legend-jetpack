@@ -23,6 +23,14 @@ CMMC_LED::CMMC_LED(Ticker *ticker)
   this->_ticker = ticker;
 };
 
+void CMMC_LED::high() {
+  digitalWrite(_ledPin, HIGH); 
+}
+
+void CMMC_LED::low() {
+  digitalWrite(_ledPin, LOW); 
+}
+
 void CMMC_LED::setPin(uint8_t pin)
 {
   _ledPin = pin;
