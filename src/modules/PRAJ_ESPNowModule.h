@@ -1,6 +1,6 @@
 
-#ifndef CMMC_ESPNOW_MODULE_H
-#define CMMC_ESPNOW_MODULE_H
+#ifndef CMMC_PRAJ_ESPNow_MODULE_H
+#define CMMC_PRAJ_ESPNow_MODULE_H
 #define CMMC_USE_ALIAS 
 
 #include <CMMC_Legend.h>
@@ -10,17 +10,18 @@
 #include <CMMC_SimplePair.h>
 #include <CMMC_Sensor.h>
 #include <CMMC_LED.h>
-#include <CMMC_BME280.hpp>
 
 #define BUTTON_PIN  0
-
-class ESPNowModule: public CMMC_Module {
+extern char userEspnowSensorName[16];
+class PRAJ_ESPNowModule: public CMMC_Module {
   public:
     void config(CMMC_System *os, AsyncWebServer* server); 
     void configLoop(); 
     void setup(); 
     void loop(); 
   private:
+    CMMC_SENSOR_DATA_T _userPacket;
+    uint8_t isCrashed = 0;
     uint8_t _defaultDeepSleep_m = 30;
     CMMC_System *os; 
     CMMC_ESPNow espNow;

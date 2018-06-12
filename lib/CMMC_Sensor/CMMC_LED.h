@@ -25,6 +25,8 @@ public:
   void toggle();
   void blink(uint32_t ms, uint8_t pin);
   void detach();
+  void low();
+  void high();
   void blink(uint32_t ms);
 
 private:
