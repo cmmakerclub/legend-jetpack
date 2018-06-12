@@ -1,7 +1,6 @@
 
 #include <CMMC_Legend.h>
 #include <modules/KadyaiModule.h>
-<<<<<<< HEAD
 #include <modules/ESPNowModule.h>
 #include <modules/OLEDModule.h>
 #include <modules/MPU6050Module.h>
