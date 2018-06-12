@@ -72,7 +72,8 @@ void WC_ESPNowModule::loop()
     sumAVE = sumAVE / ((standCount - arraySize) - arraySize);
     Serial.println(sumAVE);
 
-    espNow.send(master_mac, (u8 *)&sumAVE, 1, []() {
+    _userPacket.field1 = sumAVE*1000;
+    espNow.send(master_mac, (u8 *)&_userPacket, sizeof(_userPacket), []() {
       Serial.println("espnow sending timeout.");
     },500);
 
