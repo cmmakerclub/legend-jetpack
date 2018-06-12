@@ -73,6 +73,8 @@ void WC_ESPNowModule::loop()
     Serial.println(sumAVE);
 
     _userPacket.field1 = sumAVE*1000;
+    strcpy(_userPacket.sensorName, "SMART-WC");
+    _userPacket.nameLen = strlen(_userPacket.sensorName);
     espNow.send(master_mac, (u8 *)&_userPacket, sizeof(_userPacket), []() {
       Serial.println("espnow sending timeout.");
     },500);
