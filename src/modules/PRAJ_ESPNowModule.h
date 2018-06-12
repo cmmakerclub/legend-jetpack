@@ -12,7 +12,6 @@
 #include <CMMC_LED.h>
 
 #define BUTTON_PIN  0
-extern char userEspnowSensorName[16];
 class PRAJ_ESPNowModule: public CMMC_Module {
   public:
     void config(CMMC_System *os, AsyncWebServer* server); 

@@ -23,9 +23,7 @@ void PRAJ_ESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
       String deviceName;
       if (device != NULL) {
          deviceName  = String(device);
-         strcpy(userEspnowSensorName, deviceName.c_str());
-      }
-
+      } 
       Serial.printf("Loaded mac %s, name=%s\r\n", macStr.c_str(), deviceName.c_str());
       uint8_t mac[6];
       CMMC::convertMacStringToUint8(macStr.c_str(), mac);
