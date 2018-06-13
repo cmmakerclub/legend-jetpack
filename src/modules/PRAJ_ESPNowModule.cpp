@@ -65,15 +65,19 @@ void PRAJ_ESPNowModule::setup() {
 } 
 
 void PRAJ_ESPNowModule::_init_espnow() {
+  static PRAJ_ESPNowModule* module; 
+  module = this;
+
   espNow.init(NOW_MODE_SLAVE); 
   espNow.enable_retries(true);
   static CMMC_LED *led;
   led = ((CMMC_Legend*) os)->getBlinker();
   led->detach();
-  espNow.on_message_sent([](uint8_t *macaddr, u8 status) { led->toggle(); }); 
+  espNow.on_message_sent([](uint8_t *macaddr, u8 status) { 
+    led->toggle(); 
+    module->_go_sleep(1); 
+  }); 
 
-  static PRAJ_ESPNowModule* module; 
-  module = this;
 
   espNow.on_message_recv([](uint8_t * macaddr, uint8_t * data, uint8_t len) {
     Serial.printf("RECV: len = %u byte, isCrashed = %lu at(%lu ms)\r\n", len, data[0], millis());
