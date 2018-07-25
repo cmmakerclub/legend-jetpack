@@ -36,18 +36,17 @@ void BatteryTestESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
   this->configWebServer();
 } 
 
-void BatteryTestESPNowModule::loop() {
-  if(digitalRead(0) == LOW) {
-    // dirty = 1;
-    isCrashed = 1;
-    Serial.println("set crash state ...");
-    delay(50);
-  } 
+void BatteryTestESPNowModule::loop() { 
   if (millis() % 1000 == 0) {
-    Serial.printf("[%lu] send isCrashed = %u\r\n", millis(), isCrashed);
-    espNow.send(master_mac, (u8*) &isCrashed, 1, []() {
+    CMMC_SENSOR_DATA_T _userSensorData; 
+    _userSensorData.battery = analogRead(A0);
+    strcpy(_userSensorData.sensorName, "ESPNOW-BATTERY");
+    _userSensorData.nameLen = strlen(_userSensorData.sensorName);
+    _userSensorData.ms = millis();
+    _userSensorData.sent_ms = millis()/1000;
+    espNow.send(master_mac, (u8*) &_userSensorData, sizeof(_userSensorData), []() {
       Serial.println("espnow sending timeout."); 
-    }, 500); 
+    }, 200); 
   }
 }
 
@@ -70,22 +69,14 @@ void BatteryTestESPNowModule::_init_espnow() {
   static CMMC_LED *led;
   led = ((CMMC_Legend*) os)->getBlinker();
   led->detach();
-  espNow.on_message_sent([](uint8_t *macaddr, u8 status) { led->toggle(); }); 
-
+  espNow.on_message_sent([](uint8_t *macaddr, u8 status) { 
+    led->toggle(); 
+  }); 
   static BatteryTestESPNowModule* module; 
   module = this;
 
   espNow.on_message_recv([](uint8_t * macaddr, uint8_t * data, uint8_t len) {
-    Serial.printf("RECV: len = %u byte, isCrashed = %lu at(%lu ms)\r\n", len, data[0], millis());
-    module->isCrashed = data[0];
-    Serial.printf("[class] isCrashed = %u\r\n", module->isCrashed);;
-    if (module->isCrashed) {
-      led->blink(50);
-    }
-    else { 
-      led->detach(); 
-      led->high(); // led off
-    }
+    Serial.printf("RECV: len = %u byte, data[0] = %u at(%lu ms)\r\n", len, data[0], millis());
   });
 }
 

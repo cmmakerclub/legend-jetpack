@@ -43,7 +43,6 @@ void ESPNowModule::config(CMMC_System *os, AsyncWebServer* server) {
          deviceName  = String(device);
          strcpy(userEspnowSensorName, deviceName.c_str());
       }
-
       Serial.printf("Loaded mac %s, name=%s\r\n", macStr.c_str(), deviceName.c_str());
       uint8_t mac[6];
       CMMC::convertMacStringToUint8(macStr.c_str(), mac);
@@ -77,14 +76,16 @@ void ESPNowModule::configLoop() {
 extern CMMC_SENSOR_DATA_T userKadyaiData;
 void ESPNowModule::setup() { 
   _init_espnow(); 
-  uint8_t t = 2;
   memcpy(&userKadyaiData.to, master_mac, 6);
   userKadyaiData.sum = CMMC::checksum((uint8_t*) &userKadyaiData, sizeof(userKadyaiData) - sizeof(userKadyaiData.sum)); 
   CMMC::dump((u8*) &userKadyaiData, sizeof(userKadyaiData));
+  Serial.printf("sending..\r\n");
+  Serial.printf("field1=%lu, field2=%lu, field3=%lu, field4=%lu, field5=%lu\r\n", userKadyaiData.field1, userKadyaiData.field2, 
+  userKadyaiData.field3, userKadyaiData.field4, userKadyaiData.field5);
   espNow.send(master_mac, (u8*) &userKadyaiData, sizeof(userKadyaiData), [&]() {
     Serial.printf("espnow sending timeout. sleepTimeM = %lu\r\n", _defaultDeepSleep_m); 
     _go_sleep(_defaultDeepSleep_m);
-  }, 200); 
+  }, 500); 
 } 
 
 void ESPNowModule::_init_espnow() {

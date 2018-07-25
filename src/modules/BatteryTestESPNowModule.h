@@ -20,7 +20,6 @@ class BatteryTestESPNowModule: public CMMC_Module {
     void loop(); 
   private:
     CMMC_SENSOR_DATA_T _userPacket;
-    uint8_t isCrashed = 0;
     uint8_t _defaultDeepSleep_m = 30;
     CMMC_System *os; 
     CMMC_ESPNow espNow;
