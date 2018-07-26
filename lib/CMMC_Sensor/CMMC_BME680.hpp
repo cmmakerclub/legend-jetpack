@@ -87,7 +87,10 @@ public:
     Serial.println("BME680 initialized.");
     this->startMeasurementAtMs = millis();
     iaqSensor.begin(0x77, Wire);
-    output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
+    output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + 
+      String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + 
+      "." + String(iaqSensor.version.minor_bugfix);
+
     Serial.println(output);
     checkIaqSensorStatus();
 
@@ -123,10 +126,12 @@ public:
     }
     else
     {
-      Serial.println("BME data not available.");
+      // Serial.println("BME data not available.");
       checkIaqSensorStatus();
     }
+
     static CMMC_BME680 *that = this;
+
     that->interval.every_ms(that->everyMs, []() {
       that->cb((void *)&that->data, sizeof(that->data));
     });
