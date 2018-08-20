@@ -39,7 +39,7 @@ void LatteModule::setup() {
     Serial.printf(" field5 = %lu, field6 = %lu\r\n", data.field5, data.field6); 
     if (data.field4 == 0) {
       for(int i=0;i<NUMPIXELS;i++){ 
-        pixels->setPixelColor(i, pixels->Color(20, 20, 20)); // Moderately bright green color. 
+        pixels->setPixelColor(i, pixels->Color(20, 20, 20)); // calibrating
         pixels->show();
         delay(10);
       } 
@@ -52,7 +52,15 @@ void LatteModule::setup() {
     oled->drawString(20, 25, String(data.field3/100));
     oled->display();
       for(int i=0;i<NUMPIXELS;i++){ 
-        pixels->setPixelColor(i, pixels->Color(0, 255 , 255)); // Moderately bright green color. 
+        if (data.field3/100 <= 100) {
+           pixels->setPixelColor(i, pixels->Color(0, 255 , 0)); // green
+        }
+        else if (data.field3/100 >= 300) {
+           pixels->setPixelColor(i, pixels->Color(255, 0, 0)); // red 
+        }
+        else if (data.field3/100 >= 200) {
+           pixels->setPixelColor(i, pixels->Color(255, 128, 0)); // orange
+        }
         pixels->show();
         delay(10);
       } 
